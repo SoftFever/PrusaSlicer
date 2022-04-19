@@ -526,6 +526,7 @@ PRINT_CONFIG_CLASS_DEFINE(
     ((ConfigOptionInt,                  bottom_solid_layers))
     ((ConfigOptionFloat,                bottom_solid_min_thickness))
     ((ConfigOptionFloat,                bridge_flow_ratio))
+    ((ConfigOptionFloat, top_solid_infill_flow_ratio))
     ((ConfigOptionFloat,                bridge_speed))
     ((ConfigOptionBool,                 ensure_vertical_shell_thickness))
     ((ConfigOptionEnum<InfillPattern>,  top_fill_pattern))

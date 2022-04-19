@@ -482,6 +482,16 @@ void PrintConfigDef::init_fff_params()
     def->mode = comExpert;
     def->set_default_value(new ConfigOptionInts { 100 });
 
+    def = this->add("top_solid_infill_flow_ratio", coFloat);
+    def->label = L("Top surface flow ratio");
+    def->category = L("Advanced");
+    def->tooltip = L("This factor affects the amount of plastic for top solid infill. "
+                   "You can decrease it slightly to have smooth surface finish.");
+    def->min = 0;
+    def->max = 2;
+    def->mode = comAdvanced;
+    def->set_default_value(new ConfigOptionFloat(1));
+
     def = this->add("bridge_flow_ratio", coFloat);
     def->label = L("Bridge flow ratio");
     def->category = L("Advanced");
