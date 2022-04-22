@@ -203,26 +203,51 @@ static ExtrusionEntityCollection traverse_loops(const PerimeterGenerator &perime
             // get non-overhang paths by intersecting this loop with the grown lower slices
             extrusion_paths_append(
                 paths,
-                intersection_pl({ polygon }, perimeter_generator.lower_slices_polygons()),
+                intersection_pl({polygon},
+                                perimeter_generator
+                                    .lower_slices_polygons_true_overhang()),
                 role,
-                is_external ? perimeter_generator.ext_mm3_per_mm()           : perimeter_generator.mm3_per_mm(),
-                is_external ? perimeter_generator.ext_perimeter_flow.width() : perimeter_generator.perimeter_flow.width(),
-                (float)perimeter_generator.layer_height);
-            
-            // get overhang paths by checking what parts of this loop fall 
-            // outside the grown lower slices (thus where the distance between
-            // the loop centerline and original lower slices is >= half nozzle diameter
-            extrusion_paths_append(
-                paths,
-                diff_pl({ polygon }, perimeter_generator.lower_slices_polygons()),
-                erOverhangPerimeter,
-                perimeter_generator.mm3_per_mm_overhang(),
-                perimeter_generator.overhang_flow.width(),
-                perimeter_generator.overhang_flow.height());
-            
+                is_external ? perimeter_generator.ext_mm3_per_mm() :
+                              perimeter_generator.mm3_per_mm(),
+                is_external ? perimeter_generator.ext_perimeter_flow.width() :
+                              perimeter_generator.perimeter_flow.width(),
+                (float) perimeter_generator.layer_height);
+
+            // get overhang paths by checking what parts of this loop fall
+            // outside the grown lower slices (thus where the distance
+            // between the loop centerline and original lower slices is >=
+            // half nozzle diameter
+
+            auto polylines = diff_pl(
+                {polygon},
+                perimeter_generator.lower_slices_polygons());
+            if (!polylines.empty()) {
+                extrusion_paths_append(
+                    paths,
+                    polylines,
+                    erOverhangPerimeter,
+                    perimeter_generator.mm3_per_mm_overhang(),
+                    perimeter_generator.overhang_flow.width(),
+                    perimeter_generator.overhang_flow.height());
+            }
+            else
+            {
+                polylines = diff_pl({polygon},
+                                    perimeter_generator
+                                        .lower_slices_polygons_true_overhang());
+
+                extrusion_paths_append(
+                    paths, polylines, erTrueOverhangPerimeter,
+                    perimeter_generator.ext_mm3_per_mm(),
+                    perimeter_generator.ext_perimeter_flow.width(),
+                    (float) perimeter_generator.layer_height);
+            }
+
             // Reapply the nearest point search for starting point.
-            // We allow polyline reversal because Clipper may have randomly reversed polylines during clipping.
-            chain_and_reorder_extrusion_paths(paths, &paths.front().first_point());
+            // We allow polyline reversal because Clipper may have
+            // randomly reversed polylines during clipping.
+            chain_and_reorder_extrusion_paths(paths,
+                                              &paths.front().first_point());
         } else {
             ExtrusionPath path(role);
             path.polyline   = polygon.split_at_first_point();
@@ -314,7 +339,10 @@ void PerimeterGenerator::process()
         // lower layer, so we take lower slices and offset them by half the nozzle diameter used 
         // in the current layer
         double nozzle_diameter = this->print_config->nozzle_diameter.get_at(this->config->perimeter_extruder-1);
-        m_lower_slices_polygons = offset(*this->lower_slices, float(scale_(+nozzle_diameter/2)));
+        m_lower_slices_polygons = offset(*this->lower_slices, float(scale_(nozzle_diameter*0.5)));
+        
+        auto true_overhang_threshold = this->config->overhang_thresholds.value * 0.01 - 0.5;
+        m_lower_slices_polygons_true_overhang = offset(*this->lower_slices, float(scale_(nozzle_diameter*true_overhang_threshold)));
     }
 
     // we need to process each island separately because we might have different

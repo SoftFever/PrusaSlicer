@@ -21,6 +21,7 @@ enum ExtrusionRole : uint8_t {
     erPerimeter,
     erExternalPerimeter,
     erOverhangPerimeter,
+    erTrueOverhangPerimeter,
     erInternalInfill,
     erSolidInfill,
     erTopSolidInfill,
@@ -49,7 +50,8 @@ inline bool is_perimeter(ExtrusionRole role)
 {
     return role == erPerimeter
         || role == erExternalPerimeter
-        || role == erOverhangPerimeter;
+        || role == erOverhangPerimeter
+        || role == erTrueOverhangPerimeter;
 }
 
 inline bool is_infill(ExtrusionRole role)
@@ -72,6 +74,14 @@ inline bool is_solid_infill(ExtrusionRole role)
 inline bool is_bridge(ExtrusionRole role) {
     return role == erBridgeInfill
         || role == erOverhangPerimeter;
+}
+
+inline bool is_overhang(ExtrusionRole role) {
+    return role == erTrueOverhangPerimeter;
+}
+
+inline bool is_bridge_or_overhang(ExtrusionRole role){
+    return is_bridge(role) || is_overhang(role);
 }
 
 class ExtrusionEntity

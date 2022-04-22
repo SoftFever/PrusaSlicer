@@ -514,6 +514,16 @@ void PrintConfigDef::init_fff_params()
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionFloat(60));
 
+    def = this->add("overhang_speed", coFloat);
+    def->label = L("Overhang");
+    def->category = L("Speed");
+    def->tooltip = L("Speed for printing overhangs.");
+    def->sidetext = L("mm/s");
+    def->aliases = { "overhang_feed_rate" };
+    def->min = 0;
+    def->mode = comAdvanced;
+    def->set_default_value(new ConfigOptionFloat(60));
+
     def = this->add("brim_width", coFloat);
     def->label = L("Brim width");
     def->category = L("Skirt and brim");
@@ -1936,6 +1946,15 @@ void PrintConfigDef::init_fff_params()
                    "to apply bridge speed to them and enable fan.");
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionBool(true));
+
+    def = this->add("overhang_thresholds", coPercent);
+    def->label = L("overhang thresholds");
+    def->category = L("Advanced");
+    def->tooltip = L("Thresholds for unsupported part of a perimeters. Default is 100%(bridge only) ");
+    def->min = 0;
+    def->max = 100;
+    def->mode = comAdvanced;
+    def->set_default_value(new ConfigOptionPercent(100));
 
     def = this->add("parking_pos_retraction", coFloat);
     def->label = L("Filament parking position");

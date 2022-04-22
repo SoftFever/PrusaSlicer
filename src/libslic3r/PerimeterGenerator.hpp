@@ -61,6 +61,7 @@ public:
     double      mm3_per_mm()            const { return m_mm3_per_mm; }
     double      mm3_per_mm_overhang()   const { return m_mm3_per_mm_overhang; }
     Polygons    lower_slices_polygons() const { return m_lower_slices_polygons; }
+    Polygons    lower_slices_polygons_true_overhang() const { return m_lower_slices_polygons_true_overhang; }
 
 private:
     bool        m_spiral_vase;
@@ -69,6 +70,7 @@ private:
     double      m_mm3_per_mm;
     double      m_mm3_per_mm_overhang;
     Polygons    m_lower_slices_polygons;
+    Polygons    m_lower_slices_polygons_true_overhang;
 };
 
 }
