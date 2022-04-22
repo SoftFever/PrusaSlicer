@@ -1,0 +1,1 @@
+.\build_win.bat -c Debug -s all-dirty -d .\deps\build\
