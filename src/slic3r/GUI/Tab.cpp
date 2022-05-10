@@ -1191,11 +1191,6 @@ void Tab::activate_option(const std::string& opt_key, const wxString& category)
     m_highlighter.init(get_custom_ctrl_with_blinking_ptr(opt_key));
 }
 
-void Tab::apply_searcher()
-{
-    wxGetApp().sidebar().get_searcher().apply(m_config, m_type, m_mode);
-}
-
 void Tab::cache_config_diff(const std::vector<std::string>& selected_options)
 {
     m_cache_config.apply_only(m_presets->get_edited_preset().config, selected_options);
@@ -2837,9 +2832,6 @@ void TabPrinter::build_unregular_pages(bool from_initial_build/* = false*/)
 
     // Reload preset pages with current configuration values
     reload_config();
-
-    // apply searcher with current configuration
-    apply_searcher();
 }
 
 // this gets executed after preset is loaded and before GUI fields are updated
@@ -3490,6 +3482,28 @@ void Tab::activate_selected_page(std::function<void()> throw_if_canceled)
     toggle_options();
 }
 
+#ifdef WIN32
+// Override the wxCheckForInterrupt to process inperruptions just from key or mouse
+// and to avoid an unwanted early call of CallAfter()
+static bool CheckForInterrupt(wxWindow* wnd)
+{
+    wxCHECK(wnd, false);
+
+    MSG msg;
+    while (::PeekMessage(&msg, ((HWND)((wnd)->GetHWND())), WM_KEYFIRST, WM_KEYLAST, PM_REMOVE))
+    {
+        ::TranslateMessage(&msg);
+        ::DispatchMessage(&msg);
+    }
+    while (::PeekMessage(&msg, ((HWND)((wnd)->GetHWND())), WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE))
+    {
+        ::TranslateMessage(&msg);
+        ::DispatchMessage(&msg);
+    }
+    return true;
+}
+#endif //WIN32
+
 bool Tab::tree_sel_change_delayed()
 {
     // There is a bug related to Ubuntu overlay scrollbars, see https://github.com/prusa3d/PrusaSlicer/issues/898 and https://github.com/prusa3d/PrusaSlicer/issues/952.
@@ -3526,7 +3540,7 @@ bool Tab::tree_sel_change_delayed()
     
     auto throw_if_canceled = std::function<void()>([this](){
 #ifdef WIN32
-            wxCheckForInterrupt(m_treectrl);
+            CheckForInterrupt(m_treectrl);
             if (m_page_switch_planned)
                 throw UIBuildCanceled();
 #else // WIN32
