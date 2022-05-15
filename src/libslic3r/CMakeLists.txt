@@ -40,8 +40,6 @@ set(SLIC3R_SOURCES
     enum_bitmask.hpp
     ExPolygon.cpp
     ExPolygon.hpp
-    ExPolygonCollection.cpp
-    ExPolygonCollection.hpp
     Extruder.cpp
     Extruder.hpp
     ExtrusionEntity.cpp
@@ -94,8 +92,12 @@ set(SLIC3R_SOURCES
     Format/objparser.hpp
     Format/STL.cpp
     Format/STL.hpp
-    Format/SLAArchive.hpp
-    Format/SLAArchive.cpp
+    Format/SLAArchiveWriter.hpp
+    Format/SLAArchiveWriter.cpp
+    Format/SLAArchiveReader.hpp
+    Format/SLAArchiveReader.cpp
+    Format/ZipperArchiveImport.hpp
+    Format/ZipperArchiveImport.cpp
     Format/SL1.hpp
     Format/SL1.cpp
     Format/SL1_SVG.hpp
@@ -138,10 +140,12 @@ set(SLIC3R_SOURCES
     GCodeWriter.hpp
     Geometry.cpp
     Geometry.hpp
+    Geometry/Bicubic.hpp
     Geometry/Circle.cpp
     Geometry/Circle.hpp
     Geometry/ConvexHull.cpp
     Geometry/ConvexHull.hpp
+    Geometry/Curves.hpp
     Geometry/MedialAxis.cpp
     Geometry/MedialAxis.hpp
     Geometry/Voronoi.hpp
@@ -225,6 +229,8 @@ set(SLIC3R_SOURCES
     SlicesToTriangleMesh.cpp
     SlicingAdaptive.cpp
     SlicingAdaptive.hpp
+    Subdivide.cpp
+    Subdivide.hpp
     SupportMaterial.cpp
     SupportMaterial.hpp
     Surface.cpp

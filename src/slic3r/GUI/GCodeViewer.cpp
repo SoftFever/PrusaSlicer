@@ -3941,9 +3941,8 @@ void GCodeViewer::render_legend(float& legend_height)
             PartialTimes items;
 
             std::vector<CustomGCode::Item> custom_gcode_per_print_z = wxGetApp().is_editor() ? wxGetApp().plater()->model().custom_gcode_per_print_z.gcodes : m_custom_gcode_per_print_z;
-            int extruders_count = wxGetApp().extruders_edited_cnt();
-            std::vector<ColorRGBA> last_color(extruders_count);
-            for (int i = 0; i < extruders_count; ++i) {
+            std::vector<ColorRGBA> last_color(m_extruders_count);
+            for (size_t i = 0; i < m_extruders_count; ++i) {
                 last_color[i] = m_tool_colors[i];
             }
             int last_extruder_id = 1;
@@ -4483,23 +4482,25 @@ void GCodeViewer::render_legend(float& legend_height)
 #endif // ENABLE_LEGEND_TOOLBAR_ICONS
     ImGui::SameLine();
 #endif // ENABLE_SHOW_TOOLPATHS_COG
+    if (!wxGetApp().is_gcode_viewer()) {
 #if ENABLE_LEGEND_TOOLBAR_ICONS
-    toggle_button(Preview::OptionType::Shells, _u8L("Shells"), [image_icon](ImGuiWindow& window, const ImVec2& pos, float size) {
-        image_icon(window, pos, size, ImGui::LegendShells);
+        toggle_button(Preview::OptionType::Shells, _u8L("Shells"), [image_icon](ImGuiWindow& window, const ImVec2& pos, float size) {
+            image_icon(window, pos, size, ImGui::LegendShells);
 #else
-    toggle_button(Preview::OptionType::Shells, _u8L("Shells"), [](ImGuiWindow& window, const ImVec2& pos, float size) {
-        const ImU32 color = ImGuiWrapper::to_ImU32({ 1.0f, 1.0f, 1.0f, 1.0f });
-        const float margin = 3.0f;
-        const float proj = 0.25f * size;
-        window.DrawList->AddRect({ pos.x + margin, pos.y + size - margin }, { pos.x + size - margin - proj, pos.y + margin + proj }, color);
-        window.DrawList->AddLine({ pos.x + margin, pos.y + margin + proj }, { pos.x + margin + proj, pos.y + margin }, color);
-        window.DrawList->AddLine({ pos.x + size - margin - proj, pos.y + margin + proj }, { pos.x + size - margin, pos.y + margin }, color);
-        window.DrawList->AddLine({ pos.x + size - margin - proj, pos.y + size - margin }, { pos.x + size - margin, pos.y + size - margin - proj }, color);
-        window.DrawList->AddLine({ pos.x + margin + proj, pos.y + margin }, { pos.x + size - margin, pos.y + margin }, color);
-        window.DrawList->AddLine({ pos.x + size - margin, pos.y + margin }, { pos.x + size - margin, pos.y + size - margin - proj }, color);
+        toggle_button(Preview::OptionType::Shells, _u8L("Shells"), [](ImGuiWindow& window, const ImVec2& pos, float size) {
+            const ImU32 color = ImGuiWrapper::to_ImU32({ 1.0f, 1.0f, 1.0f, 1.0f });
+            const float margin = 3.0f;
+            const float proj = 0.25f * size;
+            window.DrawList->AddRect({ pos.x + margin, pos.y + size - margin }, { pos.x + size - margin - proj, pos.y + margin + proj }, color);
+            window.DrawList->AddLine({ pos.x + margin, pos.y + margin + proj }, { pos.x + margin + proj, pos.y + margin }, color);
+            window.DrawList->AddLine({ pos.x + size - margin - proj, pos.y + margin + proj }, { pos.x + size - margin, pos.y + margin }, color);
+            window.DrawList->AddLine({ pos.x + size - margin - proj, pos.y + size - margin }, { pos.x + size - margin, pos.y + size - margin - proj }, color);
+            window.DrawList->AddLine({ pos.x + margin + proj, pos.y + margin }, { pos.x + size - margin, pos.y + margin }, color);
+            window.DrawList->AddLine({ pos.x + size - margin, pos.y + margin }, { pos.x + size - margin, pos.y + size - margin - proj }, color);
 #endif // ENABLE_LEGEND_TOOLBAR_ICONS
-        });
-    ImGui::SameLine();
+            });
+        ImGui::SameLine();
+    }
 #if ENABLE_LEGEND_TOOLBAR_ICONS
     toggle_button(Preview::OptionType::ToolMarker, _u8L("Tool marker"), [image_icon](ImGuiWindow& window, const ImVec2& pos, float size) {
         image_icon(window, pos, size, ImGui::LegendToolMarker);
