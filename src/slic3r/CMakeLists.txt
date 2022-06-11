@@ -85,6 +85,8 @@ set(SLIC3R_GUI_SOURCES
     GUI/GUI_App.hpp
     GUI/GUI_Utils.cpp
     GUI/GUI_Utils.hpp
+    GUI/GUI_Geometry.cpp
+    GUI/GUI_Geometry.hpp
     GUI/I18N.cpp
     GUI/I18N.hpp
     GUI/MainFrame.cpp
@@ -129,6 +131,8 @@ set(SLIC3R_GUI_SOURCES
     GUI/2DBed.hpp
     GUI/3DBed.cpp
     GUI/3DBed.hpp
+    GUI/CoordAxes.cpp
+    GUI/CoordAxes.hpp
     GUI/Camera.cpp
     GUI/Camera.hpp
     GUI/wxExtensions.cpp
@@ -172,6 +176,7 @@ set(SLIC3R_GUI_SOURCES
     GUI/Jobs/Worker.hpp
     GUI/Jobs/BoostThreadWorker.hpp
     GUI/Jobs/BoostThreadWorker.cpp
+    GUI/Jobs/UIThreadWorker.hpp
     GUI/Jobs/BusyCursorJob.hpp
     GUI/Jobs/PlaterWorker.hpp
     GUI/Jobs/ArrangeJob.hpp
@@ -246,6 +251,8 @@ set(SLIC3R_GUI_SOURCES
     Utils/TCPConsole.hpp
     Utils/MKS.cpp
     Utils/MKS.hpp
+    Utils/WinRegistry.cpp
+    Utils/WinRegistry.hpp
 )
 
 if (APPLE)
@@ -287,10 +294,6 @@ if (SLIC3R_STATIC)
     # cmake build forgets this and the build fails in debug mode (or on raspberry release)
     target_compile_definitions(libslic3r_gui PUBLIC -DwxDEBUG_LEVEL=0)
 endif()
-
-if (SLIC3R_STATIC AND NOT SLIC3R_STATIC_EXCLUDE_CURL AND UNIX AND NOT APPLE)
-    target_compile_definitions(libslic3r_gui PRIVATE OPENSSL_CERT_OVERRIDE)
-endif ()
 
 if (SLIC3R_PCH AND NOT SLIC3R_SYNTAXONLY)
     add_precompiled_header(libslic3r_gui pchheader.hpp FORCEINCLUDE)
