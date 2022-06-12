@@ -164,7 +164,10 @@ namespace Slic3r {
             retract_length > 0 && this->path.size() >= 2) {
             // Reduce feedrate a bit; travel speed is often too high to move on existing material.
             // Too fast = ripping of existing material; too slow = short wipe path, thus more blob.
-            const double wipe_speed = gcodegen.writer().config.travel_speed.value * 0.8;
+            double wipe_speed = gcodegen.writer().get_current_speed() / 60;
+            if(wipe_speed < 30)
+                wipe_speed = 30;
+
             // Reduce retraction length a bit to avoid effective retraction speed to be greater than the configured one
             // due to rounding (TODO: test and/or better math for this).
             const double xy_to_e    = 0.95 * extruder.retract_speed() / wipe_speed;
