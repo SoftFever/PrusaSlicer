@@ -8,7 +8,6 @@
 #include "Point.hpp"
 #include "MultiPoint.hpp"
 #include "Polyline.hpp"
-#define SLIC3R_DEBUG_SLICE_PROCESSING
 
 namespace Slic3r {
 
